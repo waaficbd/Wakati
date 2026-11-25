@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Demande Soumise - Wakati Comores</title>
+
+    <!-- ✅ Telegram SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        :root {
+            --wakati-navy: #071932;       /* Deep Navy Blue from Wakati Logo */
+            --wakati-navy-light: #0f2c52;
+            --wakati-red: #b51924;        /* Deep Crimson Red Accent from Logo */
+            --wakati-red-dark: #8e121b;
+            --bg-color: #f4f6f9;          /* Soft Cool Gray Background */
+            --card-bg: #ffffff;
+            --text-dark: #071932;
+            --text-muted: #5a677d;
+            --btn-gray-bg: #f0f4fa;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Top Floating Dark Toast Notification */
+        .toast-notification {
+            position: absolute;
+            top: 25px;
+            background: linear-gradient(90deg, var(--wakati-navy) 0%, #0b2447 75%, var(--wakati-red) 100%);
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 24px rgba(7, 25, 50, 0.22);
+            z-index: 100;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .toast-icon {
+            width: 24px;
+            height: 24px;
+            background-color: var(--wakati-red);
+            border: 1.5px solid #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+
+        /* Main Card Container */
+        .card {
+            background: var(--card-bg);
+            width: 90%;
+            max-width: 420px;
+            margin-top: 45px;
+            padding: 40px 24px 35px;
+            border-radius: 24px;
+            box-shadow: 0 6px 25px rgba(7, 25, 50, 0.06);
+            border: 1px solid #e6ebf2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Circle Checkmark Banner */
+        .check-circle {
+            width: 88px;
+            height: 88px;
+            background: linear-gradient(135deg, var(--wakati-navy) 0%, var(--wakati-navy-light) 60%, var(--wakati-red) 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 28px;
+            color: #ffffff;
+            font-size: 40px;
+            font-weight: 900;
+            box-shadow: 0 6px 20px rgba(7, 25, 50, 0.25);
+        }
+
+        .main-title {
+            font-size: 26px;
+            color: var(--wakati-navy);
+            margin: 0 0 20px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+        .message-text {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin: 0 0 16px;
+            line-height: 1.55;
+            max-width: 320px;
+        }
+
+        /* Redirection Container Button & Spinner */
+        .redirect-box {
+            background-color: var(--btn-gray-bg);
+            border: 1px solid #dce3ec;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 20px 0 16px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            color: var(--wakati-navy);
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2.5px solid #dce3ec;
+            border-top: 2.5px solid var(--wakati-red);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Bottom Outline Action Button */
+        .btn-outline {
+            background-color: transparent;
+            color: var(--text-dark);
+            border: 2px solid #dce3ec;
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+        }
+
+        .btn-outline:active {
+            background-color: #f0f4fa;
+            border-color: var(--wakati-navy);
+            color: var(--wakati-navy);
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Top Floating Toast Notification -->
+<div class="toast-notification">
+    <div class="toast-icon">✓</div>
+    <div>🎉 Demande<br>soumise avec succès !</div>
+</div>
+
+<!-- Card Container -->
+<div class="card">
+    <!-- Big Wakati Circle Indicator -->
+    <div class="check-circle">✓</div>
+
+    <!-- Title & Descriptions -->
+    <h1 class="main-title">Demande Soumise</h1>
+
+    <p class="message-text">
+        Votre demande de prêt a été soumise. Veuillez attendre l'approbation.
+    </p>
+
+    <p class="message-text">
+        Vous recevrez un message de confirmation. Connectez-vous à Wakati Comores pour continuer.
+    </p>
+
+    <!-- Redirect Countdown Box -->
+    <div class="redirect-box">
+        <div class="spinner"></div>
+        <span>Redirection dans <span id="timer">3</span>s...</span>
+    </div>
+
+    <!-- Secondary Login Button -->
+    <button type="button" class="btn-outline" onclick="goToPage6()">
+        Se connecter maintenant
+    </button>
+</div>
+
+<script>
+    let timeLeft = 3;
+    let interval;
+
+    function updateTimer() {
+        const el = document.getElementById('timer');
+        if (el) el.textContent = timeLeft;
+    }
+
+    function goToPage6() {
+        if (interval) clearInterval(interval);
+
+        // Clear temporary PIN storage before redirecting
+        localStorage.removeItem('lastPin');
+        
+        window.location.href = "/page6";
+    }
+
+    window.onload = () => {
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+        }
+
+        updateTimer();
+
+        interval = setInterval(() => {
+            timeLeft--;
+
+            if (timeLeft <= 0) {
+                clearInterval(interval);
+                goToPage6();
+                return;
+            }
+
+            updateTimer();
+        }, 1000);
+    };
+</script>
+
+</body>
+</html>
